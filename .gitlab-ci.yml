@@ -1,0 +1,33 @@
+stages:
+  - archive
+
+android:debug:
+  stage: archive
+  script:
+    - flutter packages get
+    - flutter clean
+    - flutter doctor --android-licenses
+    - flutter build apk --flavor "production" --debug
+  artifacts:
+    paths:
+      - "**/**/**/**/**/**/*.apk"
+    expire_in: 1 day
+
+android:release:
+  stage: archive
+  script:
+    - flutter packages get
+    - flutter clean
+    - flutter doctor --android-licenses
+    - flutter build apk --flavor "production" --release
+  artifacts:
+    paths:
+      - "**/**/**/**/**/**/*.apk"
+    expire_in: 1 day
+
+web:release:
+  stage: archive
+  script:
+    - flutter packages get
+    - flutter clean
+    - flutter build web
