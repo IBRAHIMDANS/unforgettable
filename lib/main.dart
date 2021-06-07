@@ -1,8 +1,19 @@
 import 'package:birthday/screen/login.dart';
-import 'package:birthday/screen/register.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 void main() {
+  if (kIsWeb) {
+    // initialiaze the facebook javascript SDK
+    FacebookAuth.i.webInitialize(
+      appId: "1329834907365798",//<-- YOUR APP_ID
+      cookie: true,
+      xfbml: true,
+      version: "v9.0",
+    );
+  }
+
   runApp(MyApp());
 }
 
@@ -18,7 +29,7 @@ class MyApp extends StatelessWidget {
         primaryColorLight: Color.fromRGBO(255, 255, 114, 255),
         primaryColorDark: Color.fromRGBO(200, 185, 0, 255),
       ),
-      home: RegisterScreen(),
+      home: LoginScreen(),
     );
   }
 }
