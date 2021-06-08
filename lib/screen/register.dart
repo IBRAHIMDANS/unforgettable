@@ -1,6 +1,6 @@
+import 'package:birthday/_screen/login.dart';
 import 'package:birthday/lib/right-panel.dart';
 import 'package:birthday/lib/state/field.dart';
-import 'package:birthday/screen/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -14,7 +14,7 @@ bool isEmail(String string) {
   return regExp.hasMatch(string);
 }
 
-class LoginScreen extends StatelessWidget{
+class RegisterScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +35,18 @@ class LoginScreen extends StatelessWidget{
               ),
             )
         ),
-        right: LoginForm()
+        right: RegisterForm()
       )
     );
   }
 }
-class LoginFormState extends State<LoginForm>{
+class RegisterFormState extends State<RegisterForm>{
+  final firstname = StateField();
+  final lastname = StateField();
   final email = StateField();
+  final email_confirmation = StateField();
   final password = StateField();
+  final password_confirmation = StateField();
   late Widget form;
   late Widget loading;
   late Widget error;
@@ -76,13 +80,79 @@ class LoginFormState extends State<LoginForm>{
                     ),
                     Center(
                       child: Text(
-                        'Login Page',
+                        'Register Page',
                         textAlign: TextAlign.center,
                         textScaleFactor: 2.2,
                       ),
                     ),
                     SizedBox(
                       height: 50,
+                    ),
+                    Focus(
+                        canRequestFocus: false,
+                        onFocusChange: (value){
+                          if (value){
+                            return;
+                          }
+
+                          this.checkFirstname();
+                        },
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          autocorrect: false,
+
+                          decoration: InputDecoration(
+                            labelText: "Prénom",
+                            errorText: this.firstname.error,
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (String? value){
+                            if (value == null){
+                              return;
+                            }
+
+                            this.firstname.error = null;
+                            this.firstname.value = value;
+                            setState(() {});
+                          },
+                        )
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Focus(
+                        canRequestFocus: false,
+                        onFocusChange: (value){
+                          if (value){
+                            return;
+                          }
+
+                          this.checkLastname();
+                        },
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          autocorrect: false,
+
+                          decoration: InputDecoration(
+                            labelText: "Nom de famille",
+                            errorText: this.lastname.error,
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (String? value){
+                            if (value == null){
+                              return;
+                            }
+
+                            this.lastname.error = null;
+                            this.lastname.value = value;
+                            setState(() {});
+                          },
+                        )
+                    ),
+                    SizedBox(
+                      height: 35,
                     ),
                     Focus(
                       canRequestFocus: false,
@@ -118,6 +188,39 @@ class LoginFormState extends State<LoginForm>{
                       height: 15,
                     ),
                     Focus(
+                        canRequestFocus: false,
+                        onFocusChange: (value){
+                          if (value){
+                            return;
+                          }
+
+                          this.checkEmail();
+                        },
+                        child: TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          autocorrect: false,
+
+                          decoration: InputDecoration(
+                            labelText: "Confirmation",
+                            errorText: this.email_confirmation.error,
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (String? value){
+                            if (value == null){
+                              return;
+                            }
+
+                            this.email_confirmation.error = null;
+                            this.email_confirmation.value = value;
+                            setState(() {});
+                          },
+                        )
+                    ),
+                    SizedBox(
+                      height: 35,
+                    ),
+                    Focus(
                       canRequestFocus: false,
                       onFocusChange: (value){
                         if (value){
@@ -128,7 +231,7 @@ class LoginFormState extends State<LoginForm>{
                       },
                       child: TextFormField(
                         keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
+                        textInputAction: TextInputAction.next,
                         obscureText: true,
                         autocorrect: false,
                         decoration: InputDecoration(
@@ -146,6 +249,39 @@ class LoginFormState extends State<LoginForm>{
                           setState(() {});
                         },
                       )
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Focus(
+                        canRequestFocus: false,
+                        onFocusChange: (value){
+                          if (value){
+                            return;
+                          }
+
+                          this.checkPassword();
+                        },
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          obscureText: true,
+                          autocorrect: false,
+                          decoration: InputDecoration(
+                            labelText: "Confirmation",
+                            errorText: this.password_confirmation.error,
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (String? value){
+                            if (value == null){
+                              return;
+                            }
+
+                            this.password_confirmation.error = null;
+                            this.password_confirmation.value = value;
+                            setState(() {});
+                          },
+                        )
                     ),
                     SizedBox(
                       height: 30,
@@ -262,7 +398,7 @@ class LoginFormState extends State<LoginForm>{
                       ),
                       width: 320,
                       child: Text(
-                        'Register',
+                        'Login',
                         textAlign: TextAlign.center,
                         textScaleFactor: 1.1,
                       ),
@@ -270,7 +406,7 @@ class LoginFormState extends State<LoginForm>{
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
                   ),
@@ -326,47 +462,101 @@ class LoginFormState extends State<LoginForm>{
 
   isValid(){
     return
-      this.email.isValid()
-      && this.password.isValid();
+      this.firstname.isValid()
+      && this.lastname.isValid()
+      && this.email_confirmation.isValid()
+      && this.email.isValid()
+      && this.password_confirmation.isValid()
+      && this.password.isValid()
+    ;
   }
+  
   checkPassword(){
-    if (this.password.value != null){
-      if (this.password.value!.length <= 0){
-        this.password.error = "Merci de bien vouloir remplir votre mot de passe.";
-      }else if (this.password.value!.length > 40){
-        this.password.error = "Votre mot de passe ne peut pas contenir plus de 40 caractères or il en contient "+this.password.value!.length.toString()+".";
-      }else if (this.password.value!.length < 5){
-        this.password.error = "Votre mot de passe doit contenir au moins 5 caractères or il en contient "+this.password.value!.length.toString()+".";
+    if (password_confirmation.value != null){
+      if (password_confirmation.value!.length <= 0){
+        password_confirmation.error = "Merci de bien vouloir remplir votre mot de passe.";
+      }else if (password_confirmation.value!.length > 40){
+        password_confirmation.error = "Votre mot de passe ne peut pas contenir plus de 40 caractères or il en contient "+password_confirmation.value!.length.toString()+".";
+      }else if (password_confirmation.value!.length < 5){
+        password_confirmation.error = "Votre mot de passe doit contenir au moins 5 caractères or il en contient "+password_confirmation.value!.length.toString()+".";
       }else{
-        this.password.error = null;
+        password_confirmation.error = null;
+      }
+    }
+    if (password.value != null){
+      if (password.value!.length <= 0){
+        password.error = "Merci de bien vouloir remplir votre mot de passe.";
+      }else if (password.value!.length > 40){
+        password.error = "Votre mot de passe ne peut pas contenir plus de 40 caractères or il en contient "+password.value!.length.toString()+".";
+      }else if (password.value!.length < 5){
+        password.error = "Votre mot de passe doit contenir au moins 5 caractères or il en contient "+password.value!.length.toString()+".";
+      }else{
+        password.error = null;
       }
     }
 
-    this.setState(() {});
-
-    return this.password.error;
+    if (
+      password.isValid()
+      && password_confirmation.isValid()
+      && password_confirmation.value != password.value
+    ){
+      password.error = "Vos mots de passe ne concordent pas";
+      password_confirmation.error = "Vos mots de passe ne concordent pas";
+    }
   }
   checkEmail(){
     if (this.email.value != null){
       if (this.email.value!.trim().length <= 0){
-        this.email.error = "Merci de bien vouloir remplir votre adresse E-mail.";
-      }else if (!isEmail(this.email.value!)){
-        this.email.error = "Votre adresse E-mail semble avoir une syntaxe incorrecte.";
+        email.error = "Merci de bien vouloir remplir votre adresse E-mail.";
+      }else if (!isEmail(email.value!)){
+        email.error = "Votre adresse E-mail semble avoir une syntaxe incorrecte.";
       }else{
-        this.email.error = null;
+        email.error = null;
+      }
+    }
+    if (email_confirmation.value != null){
+      if (email_confirmation.value!.trim().length <= 0){
+        email_confirmation.error = "Merci de bien vouloir remplir votre adresse E-mail.";
+      }else if (!isEmail(email_confirmation.value!)){
+        email_confirmation.error = "Votre adresse E-mail semble avoir une syntaxe incorrecte.";
+      }else{
+        email_confirmation.error = null;
       }
     }
 
-    this.setState(() {});
-
-    return this.email.error;
+    if (
+      email.isValid()
+      && email_confirmation.isValid()
+      && email_confirmation.value != email.value
+    ){
+      email.error = "Vos adresse E-mail ne concordent pas";
+      email_confirmation.error = "Vos adresse E-mail ne concordent pas";
+    }
+  }
+  checkLastname(){
+    if (lastname.value != null){
+      if (lastname.value!.trim().length <= 0){
+        lastname.error = "Merci de bien vouloir remplir votre nom de famille.";
+      }else{
+        lastname.error = null;
+      }
+    }
+  }
+  checkFirstname(){
+    if (firstname.value != null){
+      if (firstname.value!.trim().length <= 0){
+        firstname.error = "Merci de bien vouloir remplir votre prénom.";
+      }else{
+        firstname.error = null;
+      }
+    }
   }
 }
 
-class LoginForm extends StatefulWidget{
+class RegisterForm extends StatefulWidget{
   @override
-  LoginFormState createState() {
-    return LoginFormState();
+  RegisterFormState createState() {
+    return RegisterFormState();
   }
 
 }

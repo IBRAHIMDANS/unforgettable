@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /*
 Expanded(
@@ -47,13 +48,19 @@ class RightPanel extends Flex{
                   )
                 ]
             ),
-            child: IntrinsicHeight(
-                child: right
+            child: SingleChildScrollView(
+              child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width,
+                    minHeight: MediaQuery.of(context).size.height
+                ),
+                child: right,
+              ),
             ),
           );
         },
       )
-    ],
+    ]
   ){
 
   }
