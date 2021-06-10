@@ -1,4 +1,3 @@
-import 'package:birthday/_screen/login.dart';
 import 'package:birthday/lib/right-panel.dart';
 import 'package:birthday/lib/state/field.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+
+import 'login.dart';
 
 bool isEmail(String string) {
   const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';

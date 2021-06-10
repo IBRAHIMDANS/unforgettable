@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:http/http.dart' as http;
 
 bool isEmail(String string) {
   const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
@@ -50,239 +51,246 @@ class LoginFormState extends State<LoginForm>{
 
   @override
   void initState() {
-    this.form = IntrinsicHeight(
-      child: Flex(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          direction: Axis.vertical,
-          children: [
-            Flexible(
-              child: Container(
-                constraints: BoxConstraints(
-                    maxWidth: 350
-                ),
-                padding: EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 7
-                ),
-                child: Flex(
-                  direction: Axis.vertical,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 70,
-                    ),
-                    Center(
-                      child: Text(
-                        'Login Page',
-                        textAlign: TextAlign.center,
-                        textScaleFactor: 2.2,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Focus(
-                      canRequestFocus: false,
-                      onFocusChange: (value){
-                        if (value){
-                          return;
-                        }
-
-                        this.checkEmail();
-                      },
-                      child: TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        autocorrect: false,
-
-                        decoration: InputDecoration(
-                          labelText: "Adresse E-mail",
-                          errorText: this.email.error,
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (String? value){
-                          if (value == null){
-                            return;
-                          }
-
-                          this.email.error = null;
-                          this.email.value = value;
-                          setState(() {});
-                        },
-                      )
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Focus(
-                      canRequestFocus: false,
-                      onFocusChange: (value){
-                        if (value){
-                          return;
-                        }
-
-                        this.checkPassword();
-                      },
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        obscureText: true,
-                        autocorrect: false,
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          errorText: this.password.error,
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (String? value){
-                          if (value == null){
-                            return;
-                          }
-
-                          this.password.error = null;
-                          this.password.value = value;
-                          setState(() {});
-                        },
-                      )
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 15
-                            ),
-                            child: Text(
-                              'Login',
-                              textAlign: TextAlign.center,
-                              textScaleFactor: 1.1,
-                            ),
-                          ),
-                          onPressed: () {
-                            this.setAsLoading();
-                            setState(() {});
-                          },
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                  ],
-                ),
-              ),
+    this.form = Column(
+      children: [
+        Expanded(
+          // A flexible child that will grow to fit the viewport but
+          // still be at least as big as necessary to fit its contents.
+          child: Container(
+            constraints: BoxConstraints(
+                maxWidth: 350
             ),
-            Column(
+            padding: EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 7
+            ),
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 70,
+                ),
+                Center(
+                  child: Text(
+                    'Login Page',
+                    textAlign: TextAlign.center,
+                    textScaleFactor: 2.2,
+                  ),
+                ),
                 SizedBox(
                   height: 50,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 5,
-                            horizontal: 5
-                        ),
-                        child: SvgPicture.asset(
-                            "asset/image/icons/facebook.svg",
-                            width: 40,
-                            height: 40
-                        ),
-                      ),
-                      onTap: () async {
-                        this.setAsLoading();
-                        final LoginResult result = await FacebookAuth.instance.login(
-                            permissions: [
-                              'user_age_range',
-                              'user_gender',
-                              'user_friends',
-                              'user_birthday',
-                              'email',
-                            ]
-                        );
+                Focus(
+                    canRequestFocus: false,
+                    onFocusChange: (value){
+                      if (value){
+                        return;
+                      }
 
-                        if (result.status == LoginStatus.success) {
-                          // you are logged
-                          final AccessToken accessToken = result.accessToken!;
+                      this.checkEmail();
+                    },
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      autocorrect: false,
+
+                      decoration: InputDecoration(
+                        labelText: "Adresse E-mail",
+                        errorText: this.email.error,
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (String? value){
+                        if (value == null){
+                          return;
                         }
 
-                        this.setAsLoaded();
+                        this.email.error = null;
+                        this.email.value = value;
+                        setState(() {});
                       },
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    GestureDetector(
+                    )
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Focus(
+                    canRequestFocus: false,
+                    onFocusChange: (value){
+                      if (value){
+                        return;
+                      }
+
+                      this.checkPassword();
+                    },
+                    child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      obscureText: true,
+                      autocorrect: false,
+                      decoration: InputDecoration(
+                        labelText: "Password",
+                        errorText: this.password.error,
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (String? value){
+                        if (value == null){
+                          return;
+                        }
+
+                        this.password.error = null;
+                        this.password.value = value;
+                        setState(() {});
+                      },
+                    )
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 5,
-                            horizontal: 5
+                            vertical: 10,
+                            horizontal: 15
                         ),
-                        child: SvgPicture.asset(
-                            "asset/image/icons/google-plus.svg",
-                            width: 40,
-                            height: 40
+                        child: Text(
+                          'Login',
+                          textAlign: TextAlign.center,
+                          textScaleFactor: 1.1,
                         ),
                       ),
-                      onTap: () {
-                        // Respond to button press
+                      onPressed: () {
+                        this.setAsLoading();
+                        setState(() {});
                       },
-                    ),
+                    )
                   ],
                 ),
                 SizedBox(
-                  height: 5,
+                  height: 50,
                 ),
-                Container(
+              ],
+            ),
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 50,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 5
+                    ),
+                    child: SvgPicture.asset(
+                        "asset/image/icons/facebook.svg",
+                        width: 40,
+                        height: 40
+                    ),
+                  ),
+                  onTap: () async {
+                    this.setAsLoading();
+                    final LoginResult result = await FacebookAuth.instance.login(
+                        permissions: [
+                          'user_age_range',
+                          'user_friends',
+                          'user_birthday',
+                          'email',
+                        ]
+                    );
+
+                    if (result.status == LoginStatus.success) {
+                      // you are logged
+                      final AccessToken accessToken = result.accessToken!;
+                      print(accessToken);
+
+                      final url = Uri.parse('https://birthday-apiim.herokuapp.com/auth/register/');
+                      final response = await http.post(url, body: {
+
+                      });
+                      print('Response status: ${response.statusCode}');
+                      print('Response body: ${response.body}');
+
+                    }
+
+                    this.setAsLoaded();
+                  },
+                ),
+                SizedBox(
+                  width: 3,
+                ),
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 5
+                    ),
+                    child: SvgPicture.asset(
+                        "asset/image/icons/google-plus.svg",
+                        width: 40,
+                        height: 40
+                    ),
+                  ),
+                  onTap: () {
+                    // Respond to button press
+                  },
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Container(
+              constraints: BoxConstraints(
+                  maxWidth: 320
+              ),
+              padding: EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 17
+              ),
+              child: ElevatedButton(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 15
+                  ),
                   constraints: BoxConstraints(
                       maxWidth: 320
                   ),
-                  padding: EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 17
-                  ),
-                  child: ElevatedButton(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 15
-                      ),
-                      constraints: BoxConstraints(
-                          maxWidth: 320
-                      ),
-                      width: 320,
-                      child: Text(
-                        'Register',
-                        textAlign: TextAlign.center,
-                        textScaleFactor: 1.1,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
-                      );
-                    },
+                  width: 320,
+                  child: Text(
+                    'Register',
+                    textAlign: TextAlign.center,
+                    textScaleFactor: 1.1,
                   ),
                 ),
-                SizedBox(
-                  height: 35,
-                )
-              ],
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()),
+                  );
+                },
+              ),
             ),
-          ]
-      ),
+            SizedBox(
+              height: 35,
+            )
+          ],
+        ),
+      ],
     );
+
     this.loading =  Center(
       child: Container(
         width: 50,

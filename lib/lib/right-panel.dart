@@ -34,27 +34,16 @@ class RightPanel extends Flex{
         builder: (BuildContext context, BoxConstraints constraints) {
           return Container(
             width: MediaQuery.of(context).size.width > 1000 ? 420 : MediaQuery.of(context).size.width,
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width,
-                minHeight: MediaQuery.of(context).size.height
-            ),
-            decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                  )
-                ]
-            ),
+            height: MediaQuery.of(context).size.height,
+
             child: SingleChildScrollView(
-              child: Container(
+              child: ConstrainedBox(
                 constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width,
-                    minHeight: MediaQuery.of(context).size.height
+                  minHeight: constraints.maxHeight,
                 ),
-                child: right,
+                child: IntrinsicHeight(
+                  child: right,
+                ),
               ),
             ),
           );
