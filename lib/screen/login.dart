@@ -1,3 +1,4 @@
+import 'package:birthday/lib/loading.dart';
 import 'package:birthday/lib/right-panel.dart';
 import 'package:birthday/lib/state/field.dart';
 import 'package:birthday/screen/register.dart';
@@ -5,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:http/http.dart' as http;
 
 bool isEmail(String string) {
@@ -291,13 +291,7 @@ class LoginFormState extends State<LoginForm>{
       ],
     );
 
-    this.loading =  Center(
-      child: Container(
-        width: 50,
-        height: 50,
-        child: LoadingIndicator(indicatorType: Indicator.circleStrokeSpin, color: Colors.red),
-      ),
-    );
+    this.loading =  Loading();
 
     this.page = this.form;
 

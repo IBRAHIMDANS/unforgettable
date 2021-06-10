@@ -1,3 +1,4 @@
+import 'package:birthday/screen/birthday-list.dart';
 import 'package:birthday/screen/login.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         primaryColorLight: Color.fromRGBO(255, 255, 114, 255),
         primaryColorDark: Color.fromRGBO(200, 185, 0, 255),
       ),
-      home: LoginScreen(),
+      home: BirthdayListScreen(),
     );
   }
 }
